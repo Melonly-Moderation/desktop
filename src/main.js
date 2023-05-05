@@ -55,6 +55,11 @@ const createWindow = () => {
 	win = new BrowserWindow({
 		width: 800,
 		height: 600,
+		webPreferences: {
+			nativeWindowOpen: true,
+		},
+		autoHideMenuBar: true,
+		backgroundColor: '#101113',
 	});
 
 	win.loadFile(path.join(__dirname, 'index.html'));
