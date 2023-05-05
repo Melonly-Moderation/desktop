@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8" />
+		<!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+		<meta
+			http-equiv="Content-Security-Policy"
+			content="default-src 'self' https://melonly.xyz; script-src 'self' 'unsafe-inline'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com;"
+		/>
+		<title>Melonly</title>
+
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700;800&display=swap"
+			rel="stylesheet"
+		/>
+
+		<link href="styles.css" rel="stylesheet" />
+	</head>
+	<body>
+		<section class="listening">
+			<span>Listening for commands</span>
+			<p>Leave this window open to listen for commands</p>
+		</section>
+
+		<section class="command hidden">
+			<p id="command-value"></p>
+		</section>
+
+		<footer>
+			<div>
+				<img src="https://melonly.xyz/brand/logo.png" alt="melonly logo" />
+				<p>Melonly Desktop App</p>
+			</div>
+			<p>
+				This app uses keystrokes to know when commands are run.
+				<a href="https://help.melonly.xyz" target="_blank">Learn more</a> or
+				<a href="https://github.com/Melonly-Moderation/desktop" target="_blank"
+					>view the source code</a
+				>.
+			</p>
+		</footer>
+	</body>
+</html>
