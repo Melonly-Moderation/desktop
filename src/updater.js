@@ -1,4 +1,4 @@
-const { app, dialog } = require('electron');
+const { app, dialog, autoUpdater } = require('electron');
 
 if (app.isPackaged) {
 	const server = 'https://updater.melonly.xyz';

@@ -46,6 +46,7 @@ const getEnv = () => {
 		encoding: 'utf-8',
 	});
 };
+module.exports.getEnv = getEnv;
 
 module.exports.getClientUrl = () => {
 	switch (getEnv()) {

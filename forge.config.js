@@ -1,5 +1,8 @@
 require('dotenv').config();
 const path = require('path');
+const { getEnv } = require('./src/utils');
+
+const env = getEnv();
 
 module.exports = {
 	packagerConfig: {
@@ -26,7 +29,7 @@ module.exports = {
 				authToken: process.env.GITHUB_TOKEN,
 				repository: {
 					owner: 'Melonly-Moderation',
-					name: 'desktop',
+					name: env === 'beta' ? 'desktop-beta' : 'desktop',
 				},
 			},
 		},
