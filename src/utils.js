@@ -38,3 +38,14 @@ module.exports.validateInput = input => {
 
 	return true;
 };
+
+module.exports.getClientUrl = () => {
+	switch (process.env.APP_ENV) {
+		case 'production':
+			return 'https://melonly.xyz';
+		case 'beta':
+			return 'https://dev.melonly.xyz';
+		case 'development':
+			return 'http://localhost:3000';
+	}
+};

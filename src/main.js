@@ -1,8 +1,13 @@
+require('dotenv').config();
 const { app, BrowserWindow } = require('electron');
+if (require('electron-squirrel-startup')) app.quit();
 const { GlobalKeyboardListener } = require('node-global-key-listener');
-const { getCharFromKey, validateInput } = require('./utils');
+const { getCharFromKey, validateInput, getClientUrl } = require('./utils');
 const Input = require('./input');
 const path = require('path');
+require('./updater');
+
+const CLIENT_URL = getClientUrl();
 
 let win;
 const input = new Input();
@@ -33,7 +38,7 @@ const done = async () => {
 
 	if (input.value.startsWith('/panel')) {
 		const mod = await import('open');
-		mod.default('http://localhost:3000/panel');
+		mod.default(`${CLIENT_URL}/panel`);
 		return;
 	}
 
@@ -45,10 +50,11 @@ const done = async () => {
 		},
 		autoHideMenuBar: true,
 		backgroundColor: '#101113',
+		icon: 'https://melonly.xyz/brand/logo.png',
 	});
 	newWin.focus();
 	newWin.moveTop();
-	await newWin.loadURL(`http://localhost:3000/command?command=${input.value}`);
+	await newWin.loadURL(`${CLIENT_URL}/command?command=${input.value}`);
 };
 
 const createWindow = () => {
@@ -60,6 +66,7 @@ const createWindow = () => {
 		},
 		autoHideMenuBar: true,
 		backgroundColor: '#101113',
+		icon: 'https://melonly.xyz/brand/logo.png',
 	});
 
 	win.loadFile(path.join(__dirname, 'index.html'));
