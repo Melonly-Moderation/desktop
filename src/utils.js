@@ -1,4 +1,6 @@
 const { Keys, alphabet, commands } = require('./constants');
+const fs = require('fs');
+const path = require('path');
 
 module.exports.getCharFromKey = (e, down, capsLocked) => {
 	let upperCase = capsLocked;
@@ -39,13 +41,21 @@ module.exports.validateInput = input => {
 	return true;
 };
 
+const getEnv = () => {
+	return fs.readFileSync(path.join(__dirname, 'environment.txt'), {
+		encoding: 'utf-8',
+	});
+};
+
 module.exports.getClientUrl = () => {
-	switch (process.env.APP_ENV) {
+	switch (getEnv()) {
 		case 'production':
 			return 'https://melonly.xyz';
 		case 'beta':
 			return 'https://dev.melonly.xyz';
 		case 'development':
 			return 'http://localhost:3000';
+		default:
+			throw new Error('Invalid env');
 	}
 };

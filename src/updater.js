@@ -1,6 +1,6 @@
 const { app, dialog } = require('electron');
 
-if (app.isPackaged && process.env.APP_ENV === 'production') {
+if (app.isPackaged) {
 	const server = 'https://updater.melonly.xyz';
 	const url = `${server}/update/${process.platform}/${app.getVersion()}`;
 	autoUpdater.setFeedURL({ url });
