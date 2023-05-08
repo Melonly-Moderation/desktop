@@ -1,5 +1,6 @@
 {
 	"name": "melonly",
+	"productName": "Melonly",
 	"version": "0.1.2",
 	"main": "./src/main.js",
 	"scripts": {
