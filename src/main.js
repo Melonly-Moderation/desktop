@@ -11,6 +11,7 @@ const CLIENT_URL = getClientUrl();
 
 let win;
 const input = new Input();
+let v;
 
 /**
  * @param {string} input
@@ -71,7 +72,7 @@ const createWindow = () => {
 
 	win.loadFile(path.join(__dirname, 'index.html'));
 
-	const v = new GlobalKeyboardListener();
+	v = new GlobalKeyboardListener();
 	v.addListener((e, down) => {
 		if (e.state === 'UP') return;
 
@@ -138,4 +139,8 @@ app.whenReady().then(() => {
 
 app.on('window-all-closed', () => {
 	if (process.platform !== 'darwin') app.quit();
+});
+
+app.on('before-quit', () => {
+	v?.kill();
 });
