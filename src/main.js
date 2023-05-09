@@ -56,6 +56,8 @@ const done = async () => {
 				autoHideMenuBar: true,
 				backgroundColor: '#101113',
 				icon: 'https://melonly.xyz/brand/logo.png',
+				modal: true,
+				parent: win,
 			});
 			newWin.focus();
 			newWin.moveTop();
