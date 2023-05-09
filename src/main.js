@@ -43,19 +43,25 @@ const done = async () => {
 		return;
 	}
 
-	const newWin = new BrowserWindow({
-		width: 600,
-		height: 600,
-		webPreferences: {
-			nativeWindowOpen: true,
-		},
-		autoHideMenuBar: true,
-		backgroundColor: '#101113',
-		icon: 'https://melonly.xyz/brand/logo.png',
+	// delay to avoid preventing chat from being sent
+	await new Promise(resolve => {
+		setTimeout(async () => {
+			const newWin = new BrowserWindow({
+				width: 600,
+				height: 600,
+				webPreferences: {
+					nativeWindowOpen: true,
+				},
+				autoHideMenuBar: true,
+				backgroundColor: '#101113',
+				icon: 'https://melonly.xyz/brand/logo.png',
+			});
+			newWin.focus();
+			newWin.moveTop();
+			await newWin.loadURL(`${CLIENT_URL}/command?command=${input.value}`);
+			resolve();
+		}, 100);
 	});
-	newWin.focus();
-	newWin.moveTop();
-	await newWin.loadURL(`${CLIENT_URL}/command?command=${input.value}`);
 };
 
 const createWindow = () => {
@@ -73,7 +79,7 @@ const createWindow = () => {
 	win.loadFile(path.join(__dirname, 'index.html'));
 
 	v = new GlobalKeyboardListener();
-	v.addListener((e, down) => {
+	v.addListener(async (e, down) => {
 		if (e.state === 'UP') return;
 
 		if (e.name === 'CAPS LOCK') {
@@ -93,7 +99,7 @@ const createWindow = () => {
 			input.isFocused &&
 			(e.name === 'RETURN' || e.name === 'NUMPAD RETURN')
 		) {
-			done();
+			await done();
 			input.reset();
 			return;
 		}
