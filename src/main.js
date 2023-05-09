@@ -6,6 +6,7 @@ const { getCharFromKey, validateInput, getClientUrl } = require('./utils');
 const Input = require('./input');
 const path = require('path');
 require('./updater');
+const mouseEvents = require('global-mouse-events');
 
 const CLIENT_URL = getClientUrl();
 
@@ -77,6 +78,11 @@ const createWindow = () => {
 	});
 
 	win.loadFile(path.join(__dirname, 'index.html'));
+
+	mouseEvents.on('mousedown', () => {
+		console.log('mouse down, resetting input');
+		input.reset();
+	});
 
 	v = new GlobalKeyboardListener();
 	v.addListener(async (e, down) => {
