@@ -19,13 +19,25 @@
 		<link href="styles.css" rel="stylesheet" />
 	</head>
 	<body>
+		<section class="command hidden">
+			<p id="command-value"></p>
+		</section>
+
 		<section class="listening">
 			<span>Listening for commands</span>
 			<p>Leave this window open to listen for commands</p>
-		</section>
 
-		<section class="command hidden">
-			<p id="command-value"></p>
+			<a
+				id="open-external"
+				class="see-commands-a"
+				href="https://help.melonly.xyz/docs/guides/desktop-app"
+				target="_blank"
+			>
+				<button class="see-commands">
+					See Commands
+					<img src="../images/external.png" alt="" class="link-icon" />
+				</button>
+			</a>
 		</section>
 
 		<footer>
@@ -35,8 +47,17 @@
 			</div>
 			<p>
 				This app uses keystrokes to know when commands are run.
-				<a href="https://discord.gg/CxFExNTzxC" target="_blank">Learn more</a> or
-				<a href="https://github.com/Melonly-Moderation/desktop" target="_blank"
+				<a
+					href="https://help.melonly.xyz/docs/guides/desktop-app"
+					target="_blank"
+					id="open-external"
+					>Learn more</a
+				>
+				or
+				<a
+					href="https://github.com/Melonly-Moderation/desktop"
+					target="_blank"
+					id="open-external"
 					>view the source code</a
 				>.
 			</p>

@@ -1,4 +1,4 @@
-const { app, BrowserWindow, dialog } = require('electron');
+const { app, BrowserWindow, dialog, shell } = require('electron');
 if (require('electron-squirrel-startup')) app.quit();
 const { GlobalKeyboardListener } = require('node-global-key-listener');
 const { getCharFromKey, validateInput, getClientUrl } = require('./utils');
@@ -42,8 +42,7 @@ const done = async () => {
 	}
 
 	if (input.value.startsWith('/panel')) {
-		const mod = await import('open');
-		mod.default(`${CLIENT_URL}/panel`);
+		shell.openExternal(`${CLIENT_URL}/panel`);
 		return;
 	}
 
@@ -81,6 +80,11 @@ const createWindow = () => {
 		autoHideMenuBar: true,
 		backgroundColor: '#101113',
 		icon: 'https://melonly.xyz/brand/logo.png',
+	});
+
+	// open links in default browser window
+	win.webContents.setWindowOpenHandler(e => {
+		shell.openExternal(e.url);
 	});
 
 	win.loadFile(path.join(__dirname, 'index.html'));
@@ -161,8 +165,7 @@ const showPrivacyDialog = async () => {
 	store.set('accepted-privacy', true);
 
 	if (response === 1) {
-		const mod = await import('open');
-		mod.default(DOCS_PAGE);
+		shell.openExternal(DOCS_PAGE);
 	}
 };
 

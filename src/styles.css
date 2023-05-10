@@ -94,3 +94,32 @@ footer div img {
     opacity: 0;
     transform: translateY(4px);
 }
+
+.see-commands-a {
+    text-decoration: none;
+    color: black;
+}
+
+.see-commands-a:hover {
+    text-decoration: none;
+}
+
+.see-commands {
+    margin-top: 20px;
+    padding: 8px 26px;
+    border: none;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    z-index: 100;
+    background-color: #E9ECEF;
+}
+
+.link-icon {
+    width: 25px;
+    height: 25px;
+}
