@@ -127,3 +127,5 @@ module.exports.commands = [
 ];
 
 module.exports.alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWSYZ';
+
+module.exports.DOCS_PAGE = 'https://help.melonly.xyz/docs/guides/desktop-app';

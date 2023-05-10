@@ -1,5 +1,4 @@
-require('dotenv').config();
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, dialog } = require('electron');
 if (require('electron-squirrel-startup')) app.quit();
 const { GlobalKeyboardListener } = require('node-global-key-listener');
 const { getCharFromKey, validateInput, getClientUrl } = require('./utils');
@@ -7,6 +6,10 @@ const Input = require('./input');
 const path = require('path');
 require('./updater');
 const mouseEvents = require('global-mouse-events');
+const { DOCS_PAGE } = require('./constants');
+const Store = require('electron-store');
+
+const store = new Store();
 
 const CLIENT_URL = getClientUrl();
 
@@ -58,6 +61,7 @@ const done = async () => {
 				icon: 'https://melonly.xyz/brand/logo.png',
 				modal: true,
 				parent: win,
+				alwaysOnTop: true,
 			});
 			newWin.focus();
 			newWin.moveTop();
@@ -142,6 +146,26 @@ const createWindow = () => {
 	});
 };
 
+const showPrivacyDialog = async () => {
+	if (store.get('accepted-privacy') === true)
+		return console.log('Privacy already accepted');
+
+	const { response } = await dialog.showMessageBox(win, {
+		title: 'Privacy & Security Statement',
+		message:
+			'This application uses keystrokes to know when you run a command. No keystrokes or data is stored or sent to Melonly. Click LEARN MORE to see our docs and how we protect your privacy.',
+		buttons: ['OK', 'LEARN MORE'],
+		icon: path.join(__dirname, '..', 'images', 'logo.png'),
+	});
+
+	store.set('accepted-privacy', true);
+
+	if (response === 1) {
+		const mod = await import('open');
+		mod.default(DOCS_PAGE);
+	}
+};
+
 app.whenReady().then(() => {
 	console.log('Ready');
 	createWindow();
@@ -149,6 +173,8 @@ app.whenReady().then(() => {
 	app.on('activate', () => {
 		if (BrowserWindow.getAllWindows().length === 0) createWindow();
 	});
+
+	showPrivacyDialog();
 });
 
 app.on('window-all-closed', () => {
