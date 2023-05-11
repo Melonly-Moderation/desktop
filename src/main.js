@@ -59,11 +59,9 @@ const done = async () => {
 				backgroundColor: '#101113',
 				icon: 'https://melonly.xyz/brand/logo.png',
 				modal: true,
-				parent: win,
-				alwaysOnTop: true,
+				frame: false,
 			});
-			newWin.focus();
-			newWin.moveTop();
+			newWin.setAlwaysOnTop(true, 'screen-saver');
 			await newWin.loadURL(`${CLIENT_URL}/command?command=${input.value}`);
 			resolve();
 		}, 100);
