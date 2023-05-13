@@ -4,6 +4,7 @@ const {
 	dialog,
 	shell,
 	globalShortcut,
+	autoUpdater,
 } = require('electron');
 if (require('electron-squirrel-startup')) app.quit();
 const { GlobalKeyboardListener } = require('node-global-key-listener');
@@ -208,6 +209,11 @@ app.whenReady().then(() => {
 
 	console.log('Ready');
 	createWindow();
+
+	if (app.isPackaged) {
+		console.log('Checking for updates on startup');
+		autoUpdater.checkForUpdates();
+	}
 
 	app.on('activate', () => {
 		if (BrowserWindow.getAllWindows().length === 0) createWindow();
