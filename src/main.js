@@ -1,13 +1,22 @@
 const { app, BrowserWindow, dialog, shell } = require('electron');
 if (require('electron-squirrel-startup')) app.quit();
 const { GlobalKeyboardListener } = require('node-global-key-listener');
-const { getCharFromKey, validateInput, getClientUrl } = require('./utils');
+const {
+	getCharFromKey,
+	validateInput,
+	getClientUrl,
+	clearLogs,
+} = require('./utils');
 const Input = require('./input');
 const path = require('path');
 require('./updater');
 const mouseEvents = require('global-mouse-events');
 const { DOCS_PAGE } = require('./constants');
 const Store = require('electron-store');
+const log = require('electron-log');
+
+// override console logging functions with electron based logging
+Object.assign(console, log.functions);
 
 const store = new Store();
 
@@ -21,6 +30,7 @@ let v;
  * @param {string} input
  */
 input.onInputChange = input => {
+	console.log('Input change', input);
 	if (input.length > 0) {
 		win.webContents.executeJavaScript(
 			`document.querySelector('.listening').classList.add('hidden'); document.querySelector('.command').classList.remove('hidden'); document.getElementById('command-value').innerText = '${input}';`
@@ -33,11 +43,8 @@ input.onInputChange = input => {
 };
 
 const done = async () => {
-	console.log('command:', input.value);
-
 	const valid = validateInput(input.value);
 	if (!valid) {
-		console.log('Command is invalid');
 		return;
 	}
 
@@ -87,7 +94,6 @@ const createWindow = () => {
 	win.loadFile(path.join(__dirname, 'index.html'));
 
 	mouseEvents.on('mousedown', () => {
-		console.log('mouse down, resetting input');
 		input.reset();
 	});
 
@@ -159,6 +165,7 @@ const showPrivacyDialog = async () => {
 		icon: path.join(__dirname, '..', 'images', 'logo.png'),
 	});
 
+	console.log('Accepted privacy dialog');
 	store.set('accepted-privacy', true);
 
 	if (response === 1) {
@@ -167,6 +174,9 @@ const showPrivacyDialog = async () => {
 };
 
 app.whenReady().then(() => {
+	// clear logs
+	clearLogs();
+
 	console.log('Ready');
 	createWindow();
 

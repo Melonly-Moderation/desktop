@@ -1,7 +1,7 @@
 {
 	"name": "melonly",
 	"productName": "Melonly",
-	"version": "0.1.6",
+	"version": "0.1.7",
 	"main": "./src/main.js",
 	"scripts": {
 		"start": "electron-forge start",
@@ -25,6 +25,7 @@
 	"dependencies": {
 		"@electron-forge/publisher-github": "^6.1.1",
 		"dotenv": "^16.0.3",
+		"electron-log": "^4.4.8",
 		"electron-squirrel-startup": "^1.0.0",
 		"electron-store": "^8.1.0",
 		"global-mouse-events": "^1.1.0",

@@ -1,3 +1,4 @@
+const { app } = require('electron');
 const { Keys, alphabet, commands } = require('./constants');
 const fs = require('fs');
 const path = require('path');
@@ -59,4 +60,12 @@ module.exports.getClientUrl = () => {
 		default:
 			throw new Error('Invalid env');
 	}
+};
+
+module.exports.clearLogs = () => {
+	fs.rmSync(path.join(app.getPath('userData'), 'logs'), {
+		recursive: true,
+		force: true,
+	});
+	console.log('Cleared previous logs file');
 };
