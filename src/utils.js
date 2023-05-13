@@ -1,4 +1,4 @@
-const { app } = require('electron');
+const { app, shell } = require('electron');
 const { Keys, alphabet, commands } = require('./constants');
 const fs = require('fs');
 const path = require('path');
@@ -68,4 +68,8 @@ module.exports.clearLogs = () => {
 		force: true,
 	});
 	console.log('Cleared previous logs file');
+};
+
+module.exports.openLogsFile = () => {
+	shell.openExternal(path.join(app.getPath('userData'), 'logs', 'main.log'));
 };

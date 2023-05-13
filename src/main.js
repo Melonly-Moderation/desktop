@@ -1,4 +1,10 @@
-const { app, BrowserWindow, dialog, shell } = require('electron');
+const {
+	app,
+	BrowserWindow,
+	dialog,
+	shell,
+	globalShortcut,
+} = require('electron');
 if (require('electron-squirrel-startup')) app.quit();
 const { GlobalKeyboardListener } = require('node-global-key-listener');
 const {
@@ -6,6 +12,7 @@ const {
 	validateInput,
 	getClientUrl,
 	clearLogs,
+	openLogsFile,
 } = require('./utils');
 const Input = require('./input');
 const path = require('path');
@@ -30,7 +37,6 @@ let v;
  * @param {string} input
  */
 input.onInputChange = input => {
-	console.log('Input change', input);
 	if (input.length > 0) {
 		win.webContents.executeJavaScript(
 			`document.querySelector('.listening').classList.add('hidden'); document.querySelector('.command').classList.remove('hidden'); document.getElementById('command-value').innerText = '${input}';`
@@ -173,9 +179,32 @@ const showPrivacyDialog = async () => {
 	}
 };
 
+const registerShortcuts = () => {
+	const success = globalShortcut.register('CommandOrControl+F6', async () => {
+		const { response } = await dialog.showMessageBox(win, {
+			message: 'Would you like to open the logs file?',
+			buttons: ['NO', 'YES'],
+			icon: path.join(__dirname, '..', 'images', 'logo.png'),
+		});
+
+		if (response === 1) {
+			console.log('Opening logs file');
+			openLogsFile();
+		}
+	});
+
+	console.log(
+		success
+			? 'Registered logs file shortcut'
+			: 'Failed to register logs file shortcut'
+	);
+};
+
 app.whenReady().then(() => {
 	// clear logs
 	clearLogs();
+
+	registerShortcuts();
 
 	console.log('Ready');
 	createWindow();
