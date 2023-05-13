@@ -14,6 +14,7 @@ const {
 	getClientUrl,
 	clearLogs,
 	openLogsFile,
+	getVersion,
 } = require('./utils');
 const Input = require('./input');
 const path = require('path');
@@ -183,7 +184,7 @@ const showPrivacyDialog = async () => {
 const registerShortcuts = () => {
 	const success = globalShortcut.register('CommandOrControl+F6', async () => {
 		const { response } = await dialog.showMessageBox(win, {
-			message: 'Would you like to open the logs file?',
+			message: `Would you like to open the logs file?\nRunning version: ${getVersion()}`,
 			buttons: ['NO', 'YES'],
 			icon: path.join(__dirname, '..', 'images', 'logo.png'),
 		});
@@ -205,9 +206,11 @@ app.whenReady().then(() => {
 	// clear logs
 	clearLogs();
 
+	console.log('Ready');
+	console.log(`Running version : ${getVersion()}`);
+
 	registerShortcuts();
 
-	console.log('Ready');
 	createWindow();
 
 	if (app.isPackaged) {

@@ -73,3 +73,7 @@ module.exports.clearLogs = () => {
 module.exports.openLogsFile = () => {
 	shell.openExternal(path.join(app.getPath('userData'), 'logs', 'main.log'));
 };
+
+module.exports.getVersion = () => {
+	return require('../package.json').version;
+}
