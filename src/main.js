@@ -5,7 +5,7 @@ const {
 	shell,
 	globalShortcut,
 	autoUpdater,
-       clipboard,
+        clipboard,
 } = require('electron');
 if (require('electron-squirrel-startup')) app.quit();
 const { GlobalKeyboardListener } = require('node-global-key-listener');
