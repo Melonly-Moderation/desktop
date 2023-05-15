@@ -5,6 +5,7 @@ const {
 	shell,
 	globalShortcut,
 	autoUpdater,
+       clipboard,
 } = require('electron');
 if (require('electron-squirrel-startup')) app.quit();
 const { GlobalKeyboardListener } = require('node-global-key-listener');
@@ -133,6 +134,11 @@ const createWindow = () => {
 
 		if (input.isFocused && ctrl && down.A) {
 			input.selectAll();
+			return;
+		}
+		
+		if (input.isFocused && ctrl && down.V) {
+			input.insert(clipboard.readText());
 			return;
 		}
 
