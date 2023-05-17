@@ -5,6 +5,7 @@ const {
 	shell,
 	globalShortcut,
 	autoUpdater,
+	clipboard,
 } = require('electron');
 if (require('electron-squirrel-startup')) app.quit();
 const { GlobalKeyboardListener } = require('node-global-key-listener');
@@ -15,14 +16,15 @@ const {
 	clearLogs,
 	openLogsFile,
 	getVersion,
+	isRobloxClientFocused,
 } = require('./utils');
 const Input = require('./input');
 const path = require('path');
 require('./updater');
-const mouseEvents = require('global-mouse-events');
 const { DOCS_PAGE } = require('./constants');
 const Store = require('electron-store');
 const log = require('electron-log');
+const mouseEvents = require('global-mouse-events');
 
 // override console logging functions with electron based logging
 Object.assign(console, log.functions);
@@ -114,6 +116,11 @@ const createWindow = () => {
 			return;
 		}
 
+		if (!isRobloxClientFocused()) {
+			input.reset();
+			return;
+		}
+
 		const ctrl = down['LEFT CTRL'] || down['RIGHT CTRL'];
 		const shift = down['LEFT SHIFT'] || down['RIGHT SHIFT'];
 
@@ -136,14 +143,23 @@ const createWindow = () => {
 			return;
 		}
 
-		if (e.name === 'LEFT ARROW' || e.name === 'RIGHT ARROW') {
+		if (
+			e.name === 'LEFT ARROW' ||
+			(e.name === 'RIGHT ARROW' && input.isFocused)
+		) {
 			const direction = e.name === 'LEFT ARROW' ? -1 : 1;
-			if (shift && ctrl) {
-				input.bulkSelect(direction);
+			if (ctrl) {
+				input.bulkSelect(direction, !shift);
 				return;
 			}
 
-			input.sideArrow(direction, shift === true);
+			input.sideArrow(direction, shift);
+			return;
+		}
+
+		if (input.isFocused && (e.name === 'UP ARROW' || e.name === 'DOWN ARROW')) {
+			const direction = e.name === 'UP ARROW' ? -1 : 1;
+			input.arrowJump(direction, shift);
 			return;
 		}
 
@@ -152,7 +168,12 @@ const createWindow = () => {
 			return;
 		}
 
-		if (input.isFocused) {
+		if (input.isFocused && ctrl && down.V) {
+			input.insert(clipboard.readText('clipboard'));
+			return;
+		}
+
+		if (input.isFocused && (!ctrl || e.name === 'W' || e.name === 'I')) {
 			const ch = getCharFromKey(e, down, input.capsLocked);
 			if (!ch) return;
 			input.insert(ch);

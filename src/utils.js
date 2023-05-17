@@ -2,6 +2,7 @@ const { app, shell } = require('electron');
 const { Keys, alphabet, commands } = require('./constants');
 const fs = require('fs');
 const path = require('path');
+const { windowManager } = require('node-window-manager');
 
 module.exports.getCharFromKey = (e, down, capsLocked) => {
 	let upperCase = capsLocked;
@@ -76,4 +77,9 @@ module.exports.openLogsFile = () => {
 
 module.exports.getVersion = () => {
 	return require('../package.json').version;
-}
+};
+
+module.exports.isRobloxClientFocused = () => {
+	const window = windowManager.getActiveWindow();
+	return window.path.toLowerCase().includes('robloxplayer');
+};

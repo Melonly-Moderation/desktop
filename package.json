@@ -29,6 +29,7 @@
 		"electron-squirrel-startup": "^1.0.0",
 		"electron-store": "^8.1.0",
 		"global-mouse-events": "^1.1.0",
-		"node-global-key-listener": "^0.1.1"
+		"node-global-key-listener": "^0.1.1",
+		"node-window-manager": "^2.2.4"
 	}
 }

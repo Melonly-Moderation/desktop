@@ -1,5 +1,3 @@
-const { alphabet } = require('./constants');
-
 class Input {
 	constructor() {
 		this.value = '';
@@ -30,15 +28,6 @@ class Input {
 	 * @param {string} value The new value of the input.
 	 */
 	onInputChange() {}
-
-	/**
-	 * Checks whether a character is a letter in the alphabet [a-zA-Z]
-	 * @param {string} char The character to check if it's a letter.
-	 * @returns Whether the character is a letter.
-	 */
-	isLetter(char) {
-		return alphabet.indexOf(char.toUpperCase()) != -1;
-	}
 
 	getSelection() {
 		return this.value.substring(this.selectionStart, this.selectionEnd);
@@ -86,8 +75,10 @@ class Input {
 	 * @param {boolean} select Whether the user is selecting text.
 	 */
 	sideArrow(direction, select) {
-		if (direction === -1 && this.cursor < 1) return;
-		if (direction === 1 && this.cursor >= this.value.length) {
+		if (
+			(direction === -1 && this.cursor < 1) ||
+			(direction === 1 && this.cursor >= this.value.length)
+		) {
 			this.resetSelection();
 			return;
 		}
@@ -142,6 +133,7 @@ class Input {
 	}
 
 	calcSelectMeta() {
+		if (!this.isTextSelected()) return;
 		if (this.selectionStart === this.selectionEnd) {
 			this.resetSelection();
 		} else if (this.selectionStart > this.selectionEnd) {
@@ -161,7 +153,7 @@ class Input {
 	 * Selects the next chunk of characters.
 	 * @param {-1|1} direction The direction to select.
 	 */
-	bulkSelect(direction) {
+	bulkSelect(direction, jump) {
 		const str =
 			direction === 1
 				? this.value.substring(this.cursor)
@@ -170,7 +162,7 @@ class Input {
 		if (str.length < 1) return;
 
 		let newCursor;
-		let letterFound = false;
+		let nonSpaceFound = false;
 		if (direction === 1) {
 			for (let i = 0; i < str.length; i++) {
 				if (i === str.length - 1) {
@@ -179,11 +171,11 @@ class Input {
 				}
 
 				const char = str.charAt(i);
-				const isLetter = this.isLetter(char);
-				if (isLetter && !letterFound) letterFound = true;
+				const notSpace = char !== ' ';
+				if (notSpace && !nonSpaceFound) nonSpaceFound = true;
 
-				if (letterFound && !isLetter) {
-					newCursor = i;
+				if (nonSpaceFound && !notSpace) {
+					newCursor = i + 1;
 					break;
 				}
 			}
@@ -196,41 +188,85 @@ class Input {
 				}
 
 				const char = str.charAt(i);
-				const isLetter = this.isLetter(char);
-				if (isLetter && !letterFound) letterFound = true;
+				const notSpace = char !== ' ';
+				if (notSpace && !nonSpaceFound) nonSpaceFound = true;
 
-				if (letterFound && !isLetter) {
-					newCursor = i = 1;
+				if (nonSpaceFound && !notSpace) {
+					newCursor = i + 1;
 					break;
 				}
 			}
 		}
 
-		if (direction === 1) {
-			if (this.direction === -1) {
-				this.selectionStart = this.selectionEnd;
-				this.selectionEnd = newCursor;
-				if (this.selectionStart > this.selectionEnd) this.direction = -1;
-				else this.direction = 1;
-			} else {
-				if (this.selectionStart == null) this.selectionStart = this.cursor;
-				this.selectionEnd = newCursor;
-				this.direction = 1;
-			}
+		if (jump) {
+			this.resetSelection();
 		} else {
-			if (this.direction === 1) {
-				this.selectionEnd = newCursor;
-				if (this.selectionStart > this.selectionEnd) this.direction = -1;
-				else this.direction = 1;
+			if (direction === 1) {
+				if (this.direction === -1) {
+					this.selectionStart = this.selectionEnd;
+					this.selectionEnd = newCursor;
+					if (this.selectionStart > this.selectionEnd) this.direction = -1;
+					else this.direction = 1;
+				} else {
+					if (this.selectionStart == null) this.selectionStart = this.cursor;
+					this.selectionEnd = newCursor;
+					this.direction = 1;
+				}
 			} else {
-				if (this.selectionEnd == null) this.selectionEnd = this.cursor;
-				this.selectionStart = newCursor;
-				this.direction = -1;
+				if (this.direction === 1) {
+					this.selectionEnd = newCursor;
+					if (this.selectionStart > this.selectionEnd) this.direction = -1;
+					else this.direction = 1;
+				} else {
+					if (this.selectionEnd == null) this.selectionEnd = this.cursor;
+					this.selectionStart = newCursor;
+					this.direction = -1;
+				}
 			}
 		}
 
 		this.calcSelectMeta();
 		this.cursor = newCursor;
+	}
+
+	/**
+	 * Finds the point to pivot around when selecting text.
+	 * @param {-1|1} direction The direction to select.
+	 */
+	findPivot(direction) {
+		if (direction === 1) {
+			if (this.direction === 1) return this.selectionStart;
+			else return this.selectionEnd;
+		} else {
+			if (this.direction === 1) return this.selectionStart;
+			else return this.selectionEnd;
+		}
+	}
+
+	/**
+	 * Results from CTRL +  arrow press at the same time.
+	 * @param {-1|1} direction The direction to jump.
+	 * @param {boolean} select Whether to select the text or not.
+	 */
+	arrowJump(direction, select) {
+		if (select) {
+			if (direction === 1 && this.cursor < this.value.length) {
+				this.selectionStart = this.isTextSelected()
+					? this.findPivot(direction)
+					: this.cursor;
+				this.selectionEnd = this.value.length;
+			} else if (direction === -1 && this.cursor > 0) {
+				this.selectionEnd = this.isTextSelected()
+					? this.findPivot(direction)
+					: this.cursor;
+				this.selectionStart = 0;
+			}
+		} else {
+			this.resetSelection();
+		}
+
+		if (direction === -1) this.cursor = 0;
+		else this.cursor = this.value.length;
 	}
 }
 
