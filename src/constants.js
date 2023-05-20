@@ -93,7 +93,7 @@ module.exports.commands = [
 		name: '/log',
 		minArgs: 3,
 		validateArgs: args => {
-			return validLogTypes.includes(args[1]);
+			return validLogTypes.includes(args[1]?.toLowerCase() || '');
 		},
 	},
 	{
