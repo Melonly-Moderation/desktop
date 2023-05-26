@@ -17,6 +17,7 @@ const {
 	openLogsFile,
 	getVersion,
 	isRobloxClientFocused,
+	getActiveWindow,
 } = require('./utils');
 const Input = require('./input');
 const path = require('path');
@@ -220,6 +221,16 @@ const registerShortcuts = () => {
 		success
 			? 'Registered logs file shortcut'
 			: 'Failed to register logs file shortcut'
+	);
+
+	const s2 = globalShortcut.register('CommandOrControl+F7', async () => {
+		console.log(getActiveWindow());
+	});
+
+	console.log(
+		s2
+			? 'Registered active window shortcut'
+			: 'Failed to register active window shortcut'
 	);
 };
 

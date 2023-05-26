@@ -79,6 +79,8 @@ module.exports.getVersion = () => {
 	return require('../package.json').version;
 };
 
+module.exports.getActiveWindow = windowManager.getActiveWindow;
+
 module.exports.isRobloxClientFocused = () => {
 	const window = windowManager.getActiveWindow();
 	return window.path.toLowerCase().includes('robloxplayer');
