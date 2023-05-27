@@ -6,6 +6,7 @@ const {
 	globalShortcut,
 	autoUpdater,
 	clipboard,
+	ipcMain,
 } = require('electron');
 if (require('electron-squirrel-startup')) app.quit();
 const { GlobalKeyboardListener } = require('node-global-key-listener');
@@ -16,6 +17,9 @@ const {
 	clearLogs,
 	openLogsFile,
 	getVersion,
+	getStore,
+	setStore,
+	isRobloxClientOpen,
 	isRobloxClientFocused,
 	getActiveWindow,
 } = require('./utils');
@@ -23,25 +27,25 @@ const Input = require('./input');
 const path = require('path');
 require('./updater');
 const { DOCS_PAGE } = require('./constants');
-const Store = require('electron-store');
 const log = require('electron-log');
 const mouseEvents = require('global-mouse-events');
-
 // override console logging functions with electron based logging
 Object.assign(console, log.functions);
-
-const store = new Store();
 
 const CLIENT_URL = getClientUrl();
 
 let win;
 const input = new Input();
 let v;
+let lastClientOpenState = false;
 
 /**
  * @param {string} input
  */
 input.onInputChange = input => {
+	if (!lastClientOpenState)
+		return;
+	
 	if (input.length > 0) {
 		win.webContents.executeJavaScript(
 			`document.querySelector('.listening').classList.add('hidden'); document.querySelector('.command').classList.remove('hidden'); document.getElementById('command-value').innerText = '${input}';`
@@ -91,6 +95,7 @@ const createWindow = () => {
 		height: 600,
 		webPreferences: {
 			nativeWindowOpen: true,
+			preload: path.join(__dirname, 'preload.js')
 		},
 		autoHideMenuBar: true,
 		backgroundColor: '#101113',
@@ -184,7 +189,7 @@ const createWindow = () => {
 };
 
 const showPrivacyDialog = async () => {
-	if (store.get('accepted-privacy') === true)
+	if (getStore('accepted-privacy') === true)
 		return console.log('Privacy already accepted');
 
 	const { response } = await dialog.showMessageBox(win, {
@@ -196,7 +201,7 @@ const showPrivacyDialog = async () => {
 	});
 
 	console.log('Accepted privacy dialog');
-	store.set('accepted-privacy', true);
+	setStore('accepted-privacy', true);
 
 	if (response === 1) {
 		shell.openExternal(DOCS_PAGE);
@@ -234,8 +239,23 @@ const registerShortcuts = () => {
 	);
 };
 
+const clientCheck = () => {
+	let b = isRobloxClientOpen();
+
+	if (lastClientOpenState !== b) {
+		lastClientOpenState = b;
+		
+		if (b) {	
+			input.reset();
+			win.webContents.executeJavaScript(`document.querySelector('.play').classList.add('hidden');`);
+		}
+		else {
+			win.webContents.executeJavaScript(`document.querySelector('.listening').classList.add('hidden'); document.querySelector('.command').classList.add('hidden'); document.querySelector('.play').classList.remove('hidden');`);
+		}
+	}
+}
+
 app.whenReady().then(() => {
-	// clear logs
 	clearLogs();
 
 	console.log('Ready');
@@ -255,6 +275,20 @@ app.whenReady().then(() => {
 	});
 
 	showPrivacyDialog();
+	
+	if (getStore('requireRblxClient') !== false) {
+		win.webContents.executeJavaScript(`document.getElementById('sw-require-rblx-client').checked = true;`);
+	}
+	
+	ipcMain.on('sw-require-rblx-client-toggled', (e, t) => {
+		setStore('requireRblxClient', t);
+		clientCheck();
+	})
+	
+	// Do initial start-up check
+	clientCheck();
+	// Only do check every 5 seconds to save performance :p
+	setInterval(clientCheck, 5000);
 });
 
 app.on('window-all-closed', () => {
