@@ -19,21 +19,10 @@ body {
     position: relative;
 }
 
-footer {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    margin-bottom: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-footer p {
-    text-align: center;
-    color: var(--dimmed);
-    font-size: 14px;
+hr {
+  border-color: #34363b;
+  width: 80%;
+  margin-bottom: 20px;
 }
 
 a {
@@ -45,7 +34,7 @@ a:hover {
     text-decoration: underline;
 }
 
-.listening, .command {
+.listening, .command, .play {
     transition-duration: 200ms;
     display: flex;
     flex-direction: column;
@@ -63,13 +52,90 @@ a:hover {
     transform: translateY(0px);
 }
 
-.listening span {
+.listening, .play span {
     font-size: 18px;
 }
 
 .listening p {
     color: var(--dimmed);
     margin-top: 2px;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 3.75em;
+  height: 2.125em;
+  font-size: 10px;
+}
+
+.switch input { 
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 1.625em;
+  width: 1.625em;
+  left: 0.25em;
+  bottom: 0.25em;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #38D9A9;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #38D9A9;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(1.625em);
+  -ms-transform: translateX(1.625em);
+  transform: translateX(1.625em);
+}
+
+.slider.round {
+  border-radius: 2.125em;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+footer p {
+  text-align: center;
+  color: var(--dimmed);
+  font-size: 14px;
 }
 
 footer div {

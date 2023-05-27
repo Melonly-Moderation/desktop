@@ -3,6 +3,9 @@ const { Keys, alphabet, commands } = require('./constants');
 const fs = require('fs');
 const path = require('path');
 const { windowManager } = require('node-window-manager');
+const Store = require("electron-store");
+
+const store = new Store();
 
 module.exports.getCharFromKey = (e, down, capsLocked) => {
 	let upperCase = capsLocked;
@@ -79,9 +82,35 @@ module.exports.getVersion = () => {
 	return require('../package.json').version;
 };
 
+const getStore = (k) => {
+	return store.get(k);
+};
+module.exports.getStore = getStore;
+
+const setStore = (k, v) => {
+	store.set(k, v);
+};
+module.exports.setStore = setStore;
+
 module.exports.getActiveWindow = windowManager.getActiveWindow;
 
+module.exports.isRobloxClientOpen = () => {
+	 if (getStore('requireRblxClient') === false)
+		 return true;
+
+	const windows = windowManager.getWindows();
+	let window = windows.find(window => window.path.toLowerCase().includes("robloxplayer"));
+
+	if (window != undefined)
+		return true;
+
+	return false;
+}
+
 module.exports.isRobloxClientFocused = () => {
+	if (getStore('requireRblxClient') === false)
+		return true;
+	
 	const window = windowManager.getActiveWindow();
 	return window.path.toLowerCase().includes('robloxplayer');
 };

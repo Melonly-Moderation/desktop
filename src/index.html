@@ -23,7 +23,7 @@
 			<p id="command-value"></p>
 		</section>
 
-		<section class="listening">
+		<section class="listening hidden">
 			<span>Listening for commands</span>
 			<p>Leave this window open to listen for commands</p>
 
@@ -39,8 +39,21 @@
 				</button>
 			</a>
 		</section>
-
+		
+		<section class="play">
+			<span>Open ER:LC on Roblox to start listening</span>
+		</section>
+		
 		<footer>
+			<section class="options">
+				<div>
+					<p>Require Roblox Client Open and Focused</p>
+					<label class="switch">
+					<input type="checkbox" id="sw-require-rblx-client">
+					<span class="slider round">
+				</div>
+			</section>
+			<hr>
 			<div>
 				<img src="https://melonly.xyz/brand/logo.png" alt="melonly logo" />
 				<p>Melonly Desktop App</p>
@@ -62,5 +75,6 @@
 				>.
 			</p>
 		</footer>
+		<script src="./renderer.js"></script>
 	</body>
 </html>
