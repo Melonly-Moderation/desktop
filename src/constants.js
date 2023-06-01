@@ -105,6 +105,10 @@ module.exports.commands = [
 		minArgs: 0,
 	},
 	{
+		name: '/view-logs',
+		minArgs: 1,
+	},
+	{
 		name: ':warn',
 		minArgs: 2,
 	},
