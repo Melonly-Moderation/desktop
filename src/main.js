@@ -53,19 +53,9 @@ input.onInputChange = input => {
 	}
 };
 
-const done = async () => {
-	const valid = validateInput(input.value);
-	if (!valid) {
-		return;
-	}
-
-	if (input.value.startsWith('/panel')) {
-		shell.openExternal(`${CLIENT_URL}/panel`);
-		return;
-	}
-
+const openModalWindow = async (url) => {
 	// delay to avoid preventing chat from being sent
-	await new Promise(resolve => {
+	return new Promise(resolve => {
 		setTimeout(async () => {
 			const newWin = new BrowserWindow({
 				width: 600,
@@ -79,10 +69,30 @@ const done = async () => {
 				modal: true,
 			});
 			newWin.setAlwaysOnTop(true, 'screen-saver');
-			await newWin.loadURL(`${CLIENT_URL}/command?command=${input.value}`);
+			await newWin.loadURL(url);
 			resolve();
 		}, 100);
 	});
+}
+
+const done = async () => {
+	const valid = validateInput(input.value);
+	if (!valid) {
+		return;
+	}
+
+	if (input.value.startsWith('/panel')) {
+		shell.openExternal(`${CLIENT_URL}/panel`);
+		return;
+	}
+
+	if (input.value.startsWith('/view-logs')) {
+		await openModalWindow(`${CLIENT_URL}/view-logs?username=${input.value.split(' ')[1]}`);
+	}
+	else {
+		await openModalWindow(`${CLIENT_URL}/command?command=${input.value}`);
+	}
+	
 };
 
 const createWindow = () => {
